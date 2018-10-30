@@ -1,3 +1,6 @@
+import numpy as np
+import scipy as sp
+
 class SMiLE():
     """SMiLE algorithm for multi label with missing labels
     (Semi-supervised multi-label classification using imcomplete label information)
