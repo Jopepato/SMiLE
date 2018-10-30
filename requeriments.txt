@@ -9,5 +9,7 @@ pluggy==0.8.0
 py==1.7.0
 pytest==3.9.3
 scandir==1.9.0
+scikit-learn==0.20.0
 scipy==1.1.0
 six==1.11.0
+sklearn==0.0
