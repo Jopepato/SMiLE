@@ -121,7 +121,7 @@ class SMiLE():
         predictions = kNN.predict(X)
         W = np.zeros(shape=[X.shape[0], X.shape[0]], dtype=int)
         for i in range(0, X.shape[0]):
-            for j in range(0, X.sjape[0]):
+            for j in range(0, X.shape[0]):
                 if int(predictions[i]) == int(predictions[j]):
                     W[i,j] = 1
                 else:
