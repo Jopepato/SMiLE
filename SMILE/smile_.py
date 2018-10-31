@@ -3,7 +3,7 @@ import scipy as sp
 from sklearn.cluster import KMeans
 
 
-class SMiLE():
+class SMiLE:
     """SMiLE algorithm for multi label with missing labels
     (Semi-supervised multi-label classification using imcomplete label information)
     
