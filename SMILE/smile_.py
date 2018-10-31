@@ -1,9 +1,8 @@
 import numpy as np
-import scipy as sp
 from sklearn.cluster import KMeans
 
 
-class SMiLE():
+class SMiLE:
     """SMiLE algorithm for multi label with missing labels
     (Semi-supervised multi-label classification using imcomplete label information)
     
@@ -27,7 +26,7 @@ class SMiLE():
     Attributes
     ----------
 
-    yCorrelation : array, [n_labels, n_labels]
+    y_corr : array, [n_labels, n_labels]
         Correlation matrix between labels
     
     W : array, [n_samples, n_samples]
@@ -38,10 +37,18 @@ class SMiLE():
     """
 
     def __init__(self, s=0.5, alpha=0.35, k=5):
-        
+        """Initialize properties.
+
+        :param s:
+        :param alpha:
+        :param k:
+        """
         self.s = s
         self.alpha = alpha
         self.k = k
+
+        self.W = None
+        self.y_corr = None
 
     def fit(self, X, y):
         """Fits the model
@@ -71,7 +78,7 @@ class SMiLE():
         predictions = np.zeros(1)
         return predictions
 
-    def labelCorrelation(self, y, s):
+    def label_correlation(self, y, s):
         """Correlation between labels in a label matrix
 
         Parameters
@@ -125,8 +132,8 @@ class SMiLE():
         
 
         return estimateMatrix
-    
-    def weightAdjacentMatrix(self, X, k):
+
+    def weight_adjacent_matrix(self, X, k):
         """Using the kNN algorithm we will use the clusters to get a weight matrix
 
         Parameters

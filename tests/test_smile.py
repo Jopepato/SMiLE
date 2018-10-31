@@ -11,7 +11,7 @@ class SmileTest(unittest.TestCase):
         smile = SMiLE()
         data = load_iris()
         x = data.data
-        weighted = smile.weightAdjacentMatrix(X=x, k=5)
+        weighted = smile.weight_adjacent_matrix(X=x, k=5)
         numberOf1s = 0
         for i in range(weighted.shape[0]):
             for j in range(weighted.shape[0]):
