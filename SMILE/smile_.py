@@ -97,15 +97,42 @@ class SMiLE:
         """
         L = np.zeros(y.shape[1], y.shape[1])
 
+        for i in range(0, y.shape[1]):
+            for j in range(0, y.shape[1]):
+                coincidence = 0
+                yi = sum(y[:,i])
+                for k in range(0, y.shape[0]):
+                    if y[k,i] == y[k,j]:
+                        coincidence += 1
+                L[i,j] = (coincidence + s)/(yi + 2*s)
 
         return L
 
-    """
-    def estimateMissingLabels():
+    
+    def estimateMissingLabels(self, y, L):
+        """Estimation of the missing labels, using the correlation matrix
 
+        Parameters
+        ----------
+        y : array-like (n_samples, n_labels)
+            Label matrix
+
+        L : array-like (n_labels, n_labels)
+            Label correlation matrix
+
+        Returns
+        -------
+        estimateMatrix : array-like (n_samples, n_labels)
+            Label estimation matrix
+
+        """
+
+        estimateMatrix = np.zeros(shape=[y.shape[0],y.shape[1]])
+
+        
 
         return estimateMatrix
-    """
+
     def weight_adjacent_matrix(self, X, k):
         """Using the kNN algorithm we will use the clusters to get a weight matrix
 
