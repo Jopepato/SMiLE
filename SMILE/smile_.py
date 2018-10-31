@@ -90,6 +90,14 @@ class SMiLE():
         """
         L = np.zeros(y.shape[1], y.shape[1])
 
+        for i in range(0, y.shape[1]):
+            for j in range(0, y.shape[1]):
+                coincidence = 0
+                yi = sum(y[:,i])
+                for k in range(0, y.shape[0]):
+                    if y[k,i] == y[k,j]:
+                        coincidence += 1
+                L[i,j] = (coincidence + s)/(yi + 2*s)
 
         return L
 
@@ -113,6 +121,8 @@ class SMiLE():
         """
 
         estimateMatrix = np.zeros(shape=[y.shape[0],y.shape[1]])
+
+        
 
         return estimateMatrix
     
