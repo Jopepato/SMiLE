@@ -1,6 +1,6 @@
 import numpy as np
 import scipy as sp
-
+from sklearn.cluster import KMeans
 
 
 def labelCorrelation(y, s):
@@ -31,10 +31,33 @@ def estimateMissingLabels():
 
     return estimateMatrix
 
-def weightAdjacentMatrix():
+def weightAdjacentMatrix(X, k):
     """Using the kNN algorithm we will use the clusters to get a weight matrix
 
+    Parameters
+    ----------
+    X : array-like or sparse matrix (n_samples, n_features)
+        Data to classify or in this case to make clusters
+    k : int
+        Number of clusters we want to make
+    
+    Returns
+    -------
+    W : array-like (n_samples, n_samples)
+        Weighted matrix created from the predictions of kNN
+        wij = 1 if xi is in the same cluster as xj
+        wij = 0 other case
     """
+    kNN = KMeans(n_clusters=k)
+    kNN.fit(X)
+    predictions = kNN.predict(X)
+    W = np.zeros(shape=[X.shape[0], X.shape[0]], dtype=int)
+    for i in range(0, X.shape[0]):
+        for j in range(0, X.sjape[0]):
+            if int(predictions[i]) == int(predictions[j]):
+                W[i,j] = 1
+            else:
+                W[i,j] = 0
 
     return W
 
