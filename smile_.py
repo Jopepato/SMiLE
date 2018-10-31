@@ -1,3 +1,43 @@
+import numpy as np
+import scipy as sp
+
+
+
+def labelCorrelation(y, s):
+    """Correlation between labels in a label matrix
+
+    Parameters
+    ----------
+    y : array-like (n_samples, n_labels)
+        Label matrix
+
+    s : float
+        Smoothness parameter
+
+    Returns
+    -------
+    L : array-like (n_labels, n_labels)
+        Label correlation matrix
+
+    """
+    L = np.zeros(y.shape[1], y.shape[1])
+
+
+    return L
+
+
+def estimateMissingLabels():
+
+
+    return estimateMatrix
+
+def weightAdjacentMatrix():
+    """Using the kNN algorithm we will use the clusters to get a weight matrix
+
+    """
+
+    return W
+
 class SMiLE():
     """SMiLE algorithm for multi label with missing labels
     (Semi-supervised multi-label classification using imcomplete label information)
