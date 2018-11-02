@@ -29,6 +29,19 @@ class SmileTest(unittest.TestCase):
             for j in range(correlation.shape[1]):
                 notEmpty += correlation[i,j]
         self.assertTrue(notEmpty != 0)
+    
+    def test_estimate_missing_labels(self):
+
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        correlation = smile.label_correlation(y, smile.s)
+        estimate_matrix = np.zeros(shape=[y.shape[0], y.shape[1]])
+        estimate_matrix = smile.estimate_mising_labels(y, correlation)
+        notEmpty = 0
+        for i in range(estimate_matrix.shape[0]):
+            for j in range(estimate_matrix.shape[1]):
+                notEmpty += estimate_matrix[i,j]
+        self.assertTrue(notEmpty != 0)
 
 if __name__ == '__main__':
     unittest.main()
