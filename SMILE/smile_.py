@@ -95,7 +95,7 @@ class SMiLE:
             Label correlation matrix
 
         """
-        L = np.zeros(y.shape[1], y.shape[1])
+        L = np.zeros(shape=[y.shape[1], y.shape[1]])
 
         for i in range(0, y.shape[1]):
             for j in range(0, y.shape[1]):
@@ -109,7 +109,7 @@ class SMiLE:
         return L
 
     
-    def estimateMissingLabels(self, y, L):
+    def estimate_mising_labels(self, y, L):
         """Estimation of the missing labels, using the correlation matrix
 
         Parameters
@@ -124,12 +124,17 @@ class SMiLE:
         -------
         estimateMatrix : array-like (n_samples, n_labels)
             Label estimation matrix
-
+            y~ic = yiT * L(.,c) if yic == 0
+            y~ic = 1 otherwise
         """
 
         estimateMatrix = np.zeros(shape=[y.shape[0],y.shape[1]])
-
-        
+        for i in range(0, y.shape[0]):
+            for j in range(0, y.shape[1]):
+                if y[i,j] == 0:
+                    estimateMatrix[i,j] = np.dot(np.transpose(y[i,:]), L[:,j])
+                else:
+                    estimateMatrix[i,j] = 1
 
         return estimateMatrix
 

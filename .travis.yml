@@ -13,7 +13,7 @@ script:
   - pytest
 branches:
   only:
-    - master
+    - /.*/
 notifications:
   email: false
 after_sucess:
