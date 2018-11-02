@@ -95,7 +95,7 @@ class SMiLE:
             Label correlation matrix
 
         """
-        L = np.zeros(y.shape[1], y.shape[1])
+        L = np.zeros(shape=[y.shape[1], y.shape[1]])
 
         for i in range(0, y.shape[1]):
             for j in range(0, y.shape[1]):

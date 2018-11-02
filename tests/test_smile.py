@@ -19,18 +19,16 @@ class SmileTest(unittest.TestCase):
         self.assertTrue(numberOf1s != 0)
 
     def test_label_correlation(self):
+        
         smile = SMiLE()
-        X, y, p_c, p_w_c = make_multilabel_classification(n_labels=50)
-        correlation = np.zeros(y.shape[1], y.shape[1])
+        X, y = make_multilabel_classification()
+        correlation = np.zeros(shape=[y.shape[1], y.shape[1]])
         correlation = smile.label_correlation(y, smile.s)
         notEmpty = 0
         for i in range(correlation.shape[0]):
             for j in range(correlation.shape[1]):
                 notEmpty += correlation[i,j]
         self.assertTrue(notEmpty != 0)
-
-
-
 
 if __name__ == '__main__':
     unittest.main()
