@@ -66,9 +66,9 @@ class SmileTest(unittest.TestCase):
     def test_predective_matrix(self):
         smile = SMiLE()
         X, y = make_multilabel_classification()
+        P = np.zeros()
 
 
-        
 
 
 
