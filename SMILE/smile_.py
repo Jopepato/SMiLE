@@ -230,3 +230,25 @@ class SMiLE:
         M = np.zeros(shape=[W.shape[0], W.shape[1]])
         M = np.abs(np.array(lambda_matrix) - np.array(W))
         return M
+    
+    def diagonal_matrix_Hc(self, H):
+        """Diagonal matrix that indicates if X is labeled
+
+        Parameters
+        ----------
+        H : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+
+        Returns
+        -------
+        Hc : array-like (n_samples, n_samples)
+            Hc = H - (H*1*1t*Ht)/(N)
+        """
+        Hc = np.zeros(shape = [H.shape[0], H.shape[0]])
+        ident = np.identity(n=H.shape[0])
+        numerator1 = np.dot(H, ident)
+        numerator2 = np.dot(np.transpose(ident), np.transpose(H))
+        numerator = np.dot(numerator1, numerator2)
+        product = numerator/H.shape[0]
+        Hc = np.abs(H - product)
+        return Hc

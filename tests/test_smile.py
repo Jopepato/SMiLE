@@ -55,6 +55,14 @@ class SmileTest(unittest.TestCase):
 
         self.assertTrue(np.sum(M) != 0)
 
+    def test_diagonal_matrix_Hc(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        H = smile.diagonal_matrix_H(X, y)
+        Hc = np.zeros(shape = [H.shape[0], H.shape[1]])
+        Hc = smile.diagonal_matrix_Hc(H)
+        self.assertTrue(np.sum(Hc) != 0)
+
 
 
 if __name__ == '__main__':
