@@ -253,11 +253,46 @@ class SMiLE:
         Hc = np.abs(H - product)
         return Hc
     
-    def predective_matrix(self, X, Hc, M):
+    def predective_matrix(self, X, Hc, M, estimate_matrix):
+        """Predictive matrix that works as the first item of the equation
 
+        Parameters
+        ----------
+        X : array-like or sparse matrix (n_samples, n_features)
+            Data to be classified or trained
+        Hc : array-like (n_samples, n_samples)
+            Diagonal matrix obtained from H
+        M : array-like(n_samples, n_samples)
+            Graph laplacian matrix
 
-        return False
+        Returns
+        -------
+        P : array-like (n_features, n_labels)
+            P = (X*Hc*Xt + alpha*X*M*Xt)-1 * X*Hc*YPred
+            R = dxc
+        """
+        P = np.zeros(shape=[X.shape[1],estimate_matrix.shape[1]])
+        return P
 
-    def label_bias(self, estimate_matrix, P, H):
+    def label_bias(self, estimate_matrix, P, X, H):
+        """Label bias that works as the second item of the equation
 
-        return False
+        Parameters
+        ----------
+        estimate_matrix : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+        P : array-like (n_features, n_labels)
+            Predictive item
+        X : array-like (n_samples, n_features)
+            Data to train or test
+        H : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+
+        Returns
+        -------
+        b : array-like (n_labels)
+            Label bias as the second item of the equation
+            b = ((estimate_matrix - Pt*X)*H*1)/N
+        """
+        b = np.zeros(estimate_matrix.shape[1])
+        return b
