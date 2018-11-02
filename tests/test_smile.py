@@ -9,14 +9,9 @@ from SMILE.smile_ import SMiLE
 class SmileTest(unittest.TestCase):
     def test_weight(self):
         smile = SMiLE()
-        data = load_iris()
-        x = data.data
-        weighted = smile.weight_adjacent_matrix(X=x, k=5)
-        numberOf1s = 0
-        for i in range(weighted.shape[0]):
-            for j in range(weighted.shape[0]):
-                numberOf1s += weighted[i,j]
-        self.assertTrue(numberOf1s != 0)
+        X, y = make_multilabel_classification()
+        W = smile.weight_adjacent_matrix(X=X, k=5)
+        self.assertTrue(np.sum(W) != 0)
 
     def test_label_correlation(self):
         
@@ -24,11 +19,7 @@ class SmileTest(unittest.TestCase):
         X, y = make_multilabel_classification()
         correlation = np.zeros(shape=[y.shape[1], y.shape[1]])
         correlation = smile.label_correlation(y, smile.s)
-        notEmpty = 0
-        for i in range(correlation.shape[0]):
-            for j in range(correlation.shape[1]):
-                notEmpty += correlation[i,j]
-        self.assertTrue(notEmpty != 0)
+        self.assertTrue(np.sum(correlation) != 0)
     
     def test_estimate_missing_labels(self):
 
@@ -37,11 +28,34 @@ class SmileTest(unittest.TestCase):
         correlation = smile.label_correlation(y, smile.s)
         estimate_matrix = np.zeros(shape=[y.shape[0], y.shape[1]])
         estimate_matrix = smile.estimate_mising_labels(y, correlation)
-        notEmpty = 0
-        for i in range(estimate_matrix.shape[0]):
-            for j in range(estimate_matrix.shape[1]):
-                notEmpty += estimate_matrix[i,j]
-        self.assertTrue(notEmpty != 0)
+        self.assertTrue(np.sum(estimate_matrix) != 0)
+    
+    def test_diagonal_matrix_H(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        diagonal_matrix = np.zeros(shape=[X.shape[0], X.shape[0]])
+        diagonal_matrix = smile.diagonal_matrix_H(X, y)
+        self.assertTrue(np.sum(diagonal_matrix) != 0)
+    
+    def test_diagonal_matrix_lambda(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        W = smile.weight_adjacent_matrix(X=X, k=5)
+        diagonal_lambda = np.zeros(shape=[X.shape[0], X.shape[0]])
+        diagonal_lambda = smile.diagonal_matrix_lambda(W)
+        self.assertTrue(np.sum(diagonal_lambda) != 0)
+
+    def test_laplacian_matrix(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        W = smile.weight_adjacent_matrix(X=X, k= 5)
+        diagonal_lambda = smile.diagonal_matrix_lambda(W)
+        M = np.zeros(shape=[X.shape[0], X.shape[0]])
+        M = smile.graph_laplacian_matrix(diagonal_lambda, W)
+
+        self.assertTrue(np.sum(M) != 0)
+
+
 
 if __name__ == '__main__':
     unittest.main()
