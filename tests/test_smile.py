@@ -63,7 +63,7 @@ class SmileTest(unittest.TestCase):
         Hc = smile.diagonal_matrix_Hc(H)
         self.assertTrue(np.sum(Hc) != 0)
 
-    def test_predective_matrix(self):
+    def test_predictive_matrix(self):
         smile = SMiLE()
         X, y = make_multilabel_classification()
         L = smile.label_correlation(y, smile.s)
@@ -74,7 +74,7 @@ class SmileTest(unittest.TestCase):
         lambda_matrix = smile.diagonal_matrix_lambda(W)
         M = smile.graph_laplacian_matrix(lambda_matrix, W)
         P = np.zeros(shape=[X.shape[1], y.shape[1]])
-        P = smile.predective_matrix(X, Hc, M, estimate_matrix)
+        P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
         self.assertTrue(np.sum(P) != 0)
 
     def test_label_bias(self):
@@ -87,7 +87,7 @@ class SmileTest(unittest.TestCase):
         W = smile.weight_adjacent_matrix(X,k=5)
         lambda_matrix = smile.diagonal_matrix_lambda(W)
         M = smile.graph_laplacian_matrix(lambda_matrix, W)
-        P = smile.predective_matrix(X, Hc, M, estimate_matrix)
+        P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
         b = np.zeros(y.shape[1])
         b = smile.label_bias(estimate_matrix, P, X, H)
         self.assertTrue(False)

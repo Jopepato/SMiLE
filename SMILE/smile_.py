@@ -193,7 +193,7 @@ class SMiLE:
         return H
     
     def diagonal_matrix_lambda(self, W):
-        """Diagonal matrix that indicates if X is labeled
+        """
 
         Parameters
         ----------
@@ -213,7 +213,7 @@ class SMiLE:
 
 
     def graph_laplacian_matrix(self, lambda_matrix, W):
-        """Diagonal matrix that indicates if X is labeled
+        """
 
         Parameters
         ----------
@@ -232,7 +232,7 @@ class SMiLE:
         return M
     
     def diagonal_matrix_Hc(self, H):
-        """Diagonal matrix that indicates if X is labeled
+        """
 
         Parameters
         ----------
@@ -253,7 +253,7 @@ class SMiLE:
         Hc = np.abs(H - product)
         return Hc
     
-    def predective_matrix(self, X, Hc, M, estimate_matrix):
+    def predictive_matrix(self, X, Hc, M, estimate_matrix):
         """Predictive matrix that works as the first item of the equation
 
         Parameters
