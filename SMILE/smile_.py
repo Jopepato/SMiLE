@@ -167,3 +167,27 @@ class SMiLE:
                     W[i,j] = 0
 
         return W
+    
+    def diagonal_matrix(self, X, y):
+        """Diagonal matrix that indicates if X is labeled
+
+        Parameters
+        ----------
+        X : array-like or sparse matrix (n_samples, n_features)
+            Data to classify
+        y : array-like (n_samples, n_labels)
+            Labels of the data
+
+        Returns
+        -------
+        H : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+        """
+
+        H = np.zeros(shape=[X.shape[0], X.shape[0]])
+
+        for i in range(0, X.shape[0]):
+            if np.sum(y[i,:]) != 0:
+                H[i,i] = 1
+
+        return H
