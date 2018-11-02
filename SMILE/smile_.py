@@ -168,7 +168,7 @@ class SMiLE:
 
         return W
     
-    def diagonal_matrix(self, X, y):
+    def diagonal_matrix_H(self, X, y):
         """Diagonal matrix that indicates if X is labeled
 
         Parameters
@@ -191,3 +191,42 @@ class SMiLE:
                 H[i,i] = 1
 
         return H
+    
+    def diagonal_matrix_lambda(self, W):
+        """Diagonal matrix that indicates if X is labeled
+
+        Parameters
+        ----------
+        W : array-like (n_samples, n_samples)
+            Weighted matrix
+
+        Returns
+        -------
+        diagonal_lambda : array-like (n_samples, n_samples)
+            Diagonal matrix having the sum of weights of the weighted matrix
+        """
+        diagonal_lambda = np.zeros(shape=[W.shape[0], W.shape[1]])
+        for i in range(0, W.shape[0]):
+            diagonal_lambda[i,i] = np.sum(W[i,:])
+        
+        return diagonal_lambda
+
+
+    def graph_laplacian_matrix(self, lambda_matrix, W):
+        """Diagonal matrix that indicates if X is labeled
+
+        Parameters
+        ----------
+        lambda_matrix : array-like (n_samples, n_samples)
+            Diagonal matrix having the sum of weights of the weighted matrix
+        W : array-like (n_samples, n_samples)
+            Weighted matrix
+
+        Returns
+        -------
+        M : array-like (n_samples, n_samples)
+            Graph laplacian matrix
+        """
+        M = np.zeros(shape=[W.shape[0], W.shape[1]])
+        M = np.abs(np.array(lambda_matrix) - np.array(W))
+        return M
