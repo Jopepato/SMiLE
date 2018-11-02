@@ -63,6 +63,13 @@ class SmileTest(unittest.TestCase):
         Hc = smile.diagonal_matrix_Hc(H)
         self.assertTrue(np.sum(Hc) != 0)
 
+    def test_predective_matrix(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+
+
+        
+
 
 
 if __name__ == '__main__':

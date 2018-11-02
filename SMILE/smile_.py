@@ -122,21 +122,21 @@ class SMiLE:
 
         Returns
         -------
-        estimateMatrix : array-like (n_samples, n_labels)
+        estimate_matrix : array-like (n_samples, n_labels)
             Label estimation matrix
             y~ic = yiT * L(.,c) if yic == 0
             y~ic = 1 otherwise
         """
 
-        estimateMatrix = np.zeros(shape=[y.shape[0],y.shape[1]])
+        estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
         for i in range(0, y.shape[0]):
             for j in range(0, y.shape[1]):
                 if y[i,j] == 0:
-                    estimateMatrix[i,j] = np.dot(np.transpose(y[i,:]), L[:,j])
+                    estimate_matrix[i,j] = np.dot(np.transpose(y[i,:]), L[:,j])
                 else:
-                    estimateMatrix[i,j] = 1
+                    estimate_matrix[i,j] = 1
 
-        return estimateMatrix
+        return estimate_matrix
 
     def weight_adjacent_matrix(self, X, k):
         """Using the kNN algorithm we will use the clusters to get a weight matrix
@@ -252,3 +252,12 @@ class SMiLE:
         product = numerator/H.shape[0]
         Hc = np.abs(H - product)
         return Hc
+    
+    def predective_matrix(self, X, Hc, M):
+
+
+        return False
+
+    def label_bias(self, estimate_matrix, P, H):
+
+        return False
