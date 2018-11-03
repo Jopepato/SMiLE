@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.cluster import KMeans
+from numpy.linalg import inv
 
 
 class SMiLE:
@@ -132,9 +133,12 @@ class SMiLE:
         for i in range(0, y.shape[0]):
             for j in range(0, y.shape[1]):
                 if y[i,j] == 0:
-                    estimate_matrix[i,j] = np.dot(np.transpose(y[i,:]), L[:,j])
+                    estimate_matrix[i,j] = np.matmul(np.transpose(y[i,:]), L[:,j])
                 else:
                     estimate_matrix[i,j] = 1
+                #Normalize the data
+                if np.sum(y[i,:]) != 0:
+                    y[i,j] = y[i,j]/(np.sum(y[i,:]))
 
         return estimate_matrix
 
@@ -246,9 +250,9 @@ class SMiLE:
         """
         Hc = np.zeros(shape = [H.shape[0], H.shape[0]])
         ident = np.identity(n=H.shape[0])
-        numerator1 = np.dot(H, ident)
-        numerator2 = np.dot(np.transpose(ident), np.transpose(H))
-        numerator = np.dot(numerator1, numerator2)
+        numerator1 = np.matmul(H, ident)
+        numerator2 = np.matmul(np.transpose(ident), np.transpose(H))
+        numerator = np.matmul(numerator1, numerator2)
         product = numerator/H.shape[0]
         Hc = np.abs(H - product)
         return Hc
@@ -271,7 +275,18 @@ class SMiLE:
             P = (X*Hc*Xt + alpha*X*M*Xt)-1 * X*Hc*YPred
             R = dxc
         """
-        P = np.zeros(shape=[X.shape[1],estimate_matrix.shape[1]])
+        P = np.zeros(shape=[X.shape[1], estimate_matrix.shape[1]])
+        numerator1 = np.matmul(np.transpose(X), Hc)
+        numerator1 = np.matmul(numerator1, X)
+        numerator2 = np.matmul(np.transpose(X), M)
+        numerator2 = np.matmul(numerator2, X)
+        numerator2 = self.alpha * numerator2
+        numerator = numerator1 + numerator2
+        numerator = inv(numerator)
+        numerator2 = np.matmul(np.transpose(X), Hc)
+        numerator2 = np.matmul(numerator2, estimate_matrix)
+        P = np.matmul(numerator, numerator2)
+
         return P
 
     def label_bias(self, estimate_matrix, P, X, H):
@@ -295,4 +310,10 @@ class SMiLE:
             b = ((estimate_matrix - Pt*X)*H*1)/N
         """
         b = np.zeros(estimate_matrix.shape[1])
+        ytranspose = np.transpose(estimate_matrix)
+        aux = np.matmul(np.transpose(P),np.transpose(X))
+        numerator1 = np.abs(ytranspose - aux)
+        numerator2 = np.matmul(H, np.identity(H.shape[0]))
+        numerator = np.matmul(numerator1, numerator2)
+        b = numerator / H.shape[0]
         return b

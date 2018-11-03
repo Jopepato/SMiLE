@@ -73,7 +73,7 @@ class SmileTest(unittest.TestCase):
         W = smile.weight_adjacent_matrix(X,k=5)
         lambda_matrix = smile.diagonal_matrix_lambda(W)
         M = smile.graph_laplacian_matrix(lambda_matrix, W)
-        P = np.zeros(shape=[X.shape[1], y.shape[1]])
+        P = np.zeros(shape= [X.shape[1], y.shape[1]])
         P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
         self.assertTrue(np.sum(P) != 0)
 
@@ -90,9 +90,7 @@ class SmileTest(unittest.TestCase):
         P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
         b = np.zeros(y.shape[1])
         b = smile.label_bias(estimate_matrix, P, X, H)
-        self.assertTrue(False)
-
-
+        self.assertTrue(np.sum(b) != 0)
 
 
 if __name__ == '__main__':
