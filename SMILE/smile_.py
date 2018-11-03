@@ -27,14 +27,37 @@ class SMiLE:
     Attributes
     ----------
 
-    y_corr : array, [n_labels, n_labels]
+    L : array, [n_labels, n_labels]
         Correlation matrix between labels
     
     W : array, [n_samples, n_samples]
         Weighted matrix created by kNN for instances
     
+    estimate_matrix : array-like (n_samples, n_labels)
+        Label estimation matrix
+        y~ic = yiT * L(.,c) if yic == 0
+        y~ic = 1 otherwise
 
+    H : array-like (n_samples, n_samples)
+        Diagonal matrix indicating if an element of X is labeled or not    
     
+    diagonal_lambda : array-like (n_samples, n_samples)
+        Diagonal matrix having the sum of weights of the weighted matrix
+
+    M : array-like (n_samples, n_samples)
+        Graph laplacian matrix
+    
+    Hc : array-like (n_samples, n_samples)
+        Hc = H - (H*1*1t*Ht)/(N)
+    
+    P : array-like (n_features, n_labels)
+        P = (X*Hc*Xt + alpha*X*M*Xt)-1 * X*Hc*YPred
+        R = dxc
+
+    b : array-like (n_labels)
+        Label bias as the second item of the equation
+        b = ((estimate_matrix - Pt*X)*H*1)/N
+     
     """
 
     def __init__(self, s=0.5, alpha=0.35, k=5):
@@ -43,13 +66,30 @@ class SMiLE:
         :param s:
         :param alpha:
         :param k:
+        :param W:
+        :param L:
+        :param estimate_matrix:
+        :param H:
+        :param diagonal_lambda:
+        :param M:
+        :param Hc:
+        :param P:
+        :param b:
         """
         self.s = s
         self.alpha = alpha
         self.k = k
 
         self.W = None
-        self.y_corr = None
+        self.L = None
+        self.estimate_matrix = None
+        self.H = None
+        self.diagonal_lambda = None
+        self.M = None
+        self.Hc = None
+        self.P = None
+        self.b = None
+
 
     def fit(self, X, y):
         """Fits the model
@@ -61,6 +101,17 @@ class SMiLE:
         y : array-like, shape=(n_samples, n_labels)
             Training labels.
         """
+        #TODO Ensure the input format
+        self.L = self.label_correlation(y, self.s)
+        self.estimate_matrix = self.estimate_mising_labels(y, self.L)
+        self.H = self.diagonal_matrix_H(X, y)
+        self.Hc = self.diagonal_matrix_Hc(self.H)
+        self.W = self.weight_adjacent_matrix(X, self.k)
+        self.diagonal_lambda = smile.diagonal_matrix_lambda(self.W)
+        self.M = self.graph_laplacian_matrix(self.diagonal_lambda, self.W)
+        self.P = self.predictive_matrix(X, self.Hc, self.M, self.estimate_matrix)
+        self.b = self.label_bias(self.estimate_matrix, self.P, X, self.H)
+
         return self
 
     def predict(self, X):
@@ -76,7 +127,10 @@ class SMiLE:
         predictions : array-like, shape=(n_samples, n_labels)
             Label predictions for the test instances.
         """
-        predictions = np.zeros(1)
+        #TODO Ensure the input and output format
+        predictions = np.zeros(shape=[X.shape[0], self.b.shape[0]])
+        for i in range(0, X.shape[0]):
+            predictions[i] = np.matmul(np.transpose(self.P), X[i]) + self.b
         return predictions
 
     def label_correlation(self, y, s):
