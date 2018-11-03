@@ -55,6 +55,42 @@ class SmileTest(unittest.TestCase):
 
         self.assertTrue(np.sum(M) != 0)
 
+    def test_diagonal_matrix_Hc(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        H = smile.diagonal_matrix_H(X, y)
+        Hc = np.zeros(shape = [H.shape[0], H.shape[1]])
+        Hc = smile.diagonal_matrix_Hc(H)
+        self.assertTrue(np.sum(Hc) != 0)
+
+    def test_predictive_matrix(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        L = smile.label_correlation(y, smile.s)
+        estimate_matrix = smile.estimate_mising_labels(y, L)
+        H = smile.diagonal_matrix_H(X, y)
+        Hc = smile.diagonal_matrix_Hc(H)
+        W = smile.weight_adjacent_matrix(X,k=5)
+        lambda_matrix = smile.diagonal_matrix_lambda(W)
+        M = smile.graph_laplacian_matrix(lambda_matrix, W)
+        P = np.zeros(shape= [X.shape[1], y.shape[1]])
+        P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
+        self.assertTrue(np.sum(P) != 0)
+
+    def test_label_bias(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        L = smile.label_correlation(y, smile.s)
+        estimate_matrix = smile.estimate_mising_labels(y, L)
+        H = smile.diagonal_matrix_H(X, y)
+        Hc = smile.diagonal_matrix_Hc(H)
+        W = smile.weight_adjacent_matrix(X,k=5)
+        lambda_matrix = smile.diagonal_matrix_lambda(W)
+        M = smile.graph_laplacian_matrix(lambda_matrix, W)
+        P = smile.predictive_matrix(X, Hc, M, estimate_matrix)
+        b = np.zeros(y.shape[1])
+        b = smile.label_bias(estimate_matrix, P, X, H)
+        self.assertTrue(np.sum(b) != 0)
 
 
 if __name__ == '__main__':

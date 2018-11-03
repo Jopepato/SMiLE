@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.cluster import KMeans
+from numpy.linalg import inv
 
 
 class SMiLE:
@@ -122,21 +123,24 @@ class SMiLE:
 
         Returns
         -------
-        estimateMatrix : array-like (n_samples, n_labels)
+        estimate_matrix : array-like (n_samples, n_labels)
             Label estimation matrix
             y~ic = yiT * L(.,c) if yic == 0
             y~ic = 1 otherwise
         """
 
-        estimateMatrix = np.zeros(shape=[y.shape[0],y.shape[1]])
+        estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
         for i in range(0, y.shape[0]):
             for j in range(0, y.shape[1]):
                 if y[i,j] == 0:
-                    estimateMatrix[i,j] = np.dot(np.transpose(y[i,:]), L[:,j])
+                    estimate_matrix[i,j] = np.matmul(np.transpose(y[i,:]), L[:,j])
                 else:
-                    estimateMatrix[i,j] = 1
+                    estimate_matrix[i,j] = 1
+                #Normalize the data
+                if np.sum(y[i,:]) != 0:
+                    y[i,j] = y[i,j]/(np.sum(y[i,:]))
 
-        return estimateMatrix
+        return estimate_matrix
 
     def weight_adjacent_matrix(self, X, k):
         """Using the kNN algorithm we will use the clusters to get a weight matrix
@@ -193,7 +197,7 @@ class SMiLE:
         return H
     
     def diagonal_matrix_lambda(self, W):
-        """Diagonal matrix that indicates if X is labeled
+        """
 
         Parameters
         ----------
@@ -213,7 +217,7 @@ class SMiLE:
 
 
     def graph_laplacian_matrix(self, lambda_matrix, W):
-        """Diagonal matrix that indicates if X is labeled
+        """
 
         Parameters
         ----------
@@ -230,3 +234,86 @@ class SMiLE:
         M = np.zeros(shape=[W.shape[0], W.shape[1]])
         M = np.abs(np.array(lambda_matrix) - np.array(W))
         return M
+    
+    def diagonal_matrix_Hc(self, H):
+        """
+
+        Parameters
+        ----------
+        H : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+
+        Returns
+        -------
+        Hc : array-like (n_samples, n_samples)
+            Hc = H - (H*1*1t*Ht)/(N)
+        """
+        Hc = np.zeros(shape = [H.shape[0], H.shape[0]])
+        ident = np.identity(n=H.shape[0])
+        numerator1 = np.matmul(H, ident)
+        numerator2 = np.matmul(np.transpose(ident), np.transpose(H))
+        numerator = np.matmul(numerator1, numerator2)
+        product = numerator/H.shape[0]
+        Hc = np.abs(H - product)
+        return Hc
+    
+    def predictive_matrix(self, X, Hc, M, estimate_matrix):
+        """Predictive matrix that works as the first item of the equation
+
+        Parameters
+        ----------
+        X : array-like or sparse matrix (n_samples, n_features)
+            Data to be classified or trained
+        Hc : array-like (n_samples, n_samples)
+            Diagonal matrix obtained from H
+        M : array-like(n_samples, n_samples)
+            Graph laplacian matrix
+
+        Returns
+        -------
+        P : array-like (n_features, n_labels)
+            P = (X*Hc*Xt + alpha*X*M*Xt)-1 * X*Hc*YPred
+            R = dxc
+        """
+        P = np.zeros(shape=[X.shape[1], estimate_matrix.shape[1]])
+        numerator1 = np.matmul(np.transpose(X), Hc)
+        numerator1 = np.matmul(numerator1, X)
+        numerator2 = np.matmul(np.transpose(X), M)
+        numerator2 = np.matmul(numerator2, X)
+        numerator2 = self.alpha * numerator2
+        numerator = numerator1 + numerator2
+        numerator = inv(numerator)
+        numerator2 = np.matmul(np.transpose(X), Hc)
+        numerator2 = np.matmul(numerator2, estimate_matrix)
+        P = np.matmul(numerator, numerator2)
+
+        return P
+
+    def label_bias(self, estimate_matrix, P, X, H):
+        """Label bias that works as the second item of the equation
+
+        Parameters
+        ----------
+        estimate_matrix : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+        P : array-like (n_features, n_labels)
+            Predictive item
+        X : array-like (n_samples, n_features)
+            Data to train or test
+        H : array-like (n_samples, n_samples)
+            Diagonal matrix indicating if an element of X is labeled or not
+
+        Returns
+        -------
+        b : array-like (n_labels)
+            Label bias as the second item of the equation
+            b = ((estimate_matrix - Pt*X)*H*1)/N
+        """
+        b = np.zeros(estimate_matrix.shape[1])
+        ytranspose = np.transpose(estimate_matrix)
+        aux = np.matmul(np.transpose(P),np.transpose(X))
+        numerator1 = np.abs(ytranspose - aux)
+        numerator2 = np.matmul(H, np.identity(H.shape[0]))
+        numerator = np.matmul(numerator1, numerator2)
+        b = numerator / H.shape[0]
+        return b
