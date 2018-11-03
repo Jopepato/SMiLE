@@ -92,6 +92,23 @@ class SmileTest(unittest.TestCase):
         b = smile.label_bias(estimate_matrix, P, X, H)
         self.assertTrue(np.sum(b) != 0)
 
+    
+    def test_fit(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        smile.fit(X, y)
+        self.assertTrue(np.sum(smile.P) != 0)
+        self.assertTrue(np.sum(smile.b) != 0)
+
+
+    def test_predict(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        smile.fit(X,y)
+        predictions = np.zeros(shape=[X.shape[0], y.shape[1]])
+        predictions = smile.predict(X)
+        self.assertTrue(np.sum(predictions) != 0)
+
 
 if __name__ == '__main__':
     unittest.main()
