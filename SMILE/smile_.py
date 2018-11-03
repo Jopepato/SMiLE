@@ -367,11 +367,7 @@ class SMiLE:
         b = np.zeros(estimate_matrix.shape[1])
         aux = np.matmul(np.transpose(P),np.transpose(X))
         numerator1 = np.abs(np.transpose(estimate_matrix) - aux)
-        numerator2 = np.matmul(H, np.identity(H.shape[0]))
-        print numerator2.shape
+        numerator2 = np.diag(H)
         numerator = np.matmul(numerator1, numerator2)
-        print numerator.shape
         b = numerator / H.shape[0]
-        print b.shape
-        print b
         return b
