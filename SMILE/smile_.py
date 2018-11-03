@@ -107,7 +107,7 @@ class SMiLE:
         self.H = self.diagonal_matrix_H(X, y)
         self.Hc = self.diagonal_matrix_Hc(self.H)
         self.W = self.weight_adjacent_matrix(X, self.k)
-        self.diagonal_lambda = smile.diagonal_matrix_lambda(self.W)
+        self.diagonal_lambda = self.diagonal_matrix_lambda(self.W)
         self.M = self.graph_laplacian_matrix(self.diagonal_lambda, self.W)
         self.P = self.predictive_matrix(X, self.Hc, self.M, self.estimate_matrix)
         self.b = self.label_bias(self.estimate_matrix, self.P, X, self.H)
@@ -130,7 +130,9 @@ class SMiLE:
         #TODO Ensure the input and output format
         predictions = np.zeros(shape=[X.shape[0], self.b.shape[0]])
         for i in range(0, X.shape[0]):
-            predictions[i] = np.matmul(np.transpose(self.P), X[i]) + self.b
+            numerator1 = np.matmul(np.transpose(self.P), X[i,:])
+            predictions[i] = numerator1
+            #predictions[i] += self.b
         return predictions
 
     def label_correlation(self, y, s):
