@@ -131,8 +131,7 @@ class SMiLE:
         predictions = np.zeros(shape=[X.shape[0], self.b.shape[0]])
         for i in range(0, X.shape[0]):
             numerator1 = np.matmul(np.transpose(self.P), X[i,:])
-            predictions[i] = numerator1
-            #predictions[i] += self.b
+            predictions[i] = numerator1 + self.b
         return predictions
 
     def label_correlation(self, y, s):
@@ -366,10 +365,13 @@ class SMiLE:
             b = ((estimate_matrix - Pt*X)*H*1)/N
         """
         b = np.zeros(estimate_matrix.shape[1])
-        ytranspose = np.transpose(estimate_matrix)
         aux = np.matmul(np.transpose(P),np.transpose(X))
-        numerator1 = np.abs(ytranspose - aux)
+        numerator1 = np.abs(np.transpose(estimate_matrix) - aux)
         numerator2 = np.matmul(H, np.identity(H.shape[0]))
+        print numerator2.shape
         numerator = np.matmul(numerator1, numerator2)
+        print numerator.shape
         b = numerator / H.shape[0]
+        print b.shape
+        print b
         return b
