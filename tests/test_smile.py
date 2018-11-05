@@ -101,6 +101,21 @@ class SmileTest(unittest.TestCase):
         predictions = smile.predict(X)
         self.assertTrue(np.sum(predictions) != 0)
 
+    def test_getParams(self):
+        smile = SMiLE()
+        s, alpha, k = smile.getParams()
+        self.assertEqual(s, 0.5)
+        self.assertEqual(alpha, 0.35)
+        self.assertEqual(k, 5)
+
+    def test_setParams(self):
+        smile = SMiLE()
+        smile.setParams(0.85, 0.17, 7)
+        s, alpha, k = smile.getParams()
+        self.assertEqual(s, 0.85)
+        self.assertEqual(alpha, 0.17)
+        self.assertEqual(k, 7)
+
 
 if __name__ == '__main__':
     unittest.main()
