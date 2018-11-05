@@ -131,3 +131,46 @@ class SMiLE:
             numerator1 = np.matmul(np.transpose(self.P), X[i,:])
             predictions[i] = numerator1 + self.b
         return predictions
+    
+    def getParams(self):
+        """Returns the parameters of this model
+        
+        Returns:
+        --------
+        s : float, optional, default : 0.5
+            Smoothness parameter for class imbalance
+    
+        alpha : float, optional, default : 0.35
+            Smoothness assumption parameter, ensures similar instances
+            having similar predicted output. This parameter balances the
+            importance of the two terms of the equation to optimize
+    
+        k : int, optional, default : 5
+            Neighbours parameter for clustering during the algorithm.
+            It will indicate the number of clusters we want to create
+            for the k nearest neighbor (kNN)
+        """
+        return self.s, self.alpha, self.k
+
+    def setParams(self, s, alpha, k):
+        """Sets the parameters of this model
+        
+        Parameters:
+        ----------
+        s : float, optional, default : 0.5
+            Smoothness parameter for class imbalance
+    
+        alpha : float, optional, default : 0.35
+            Smoothness assumption parameter, ensures similar instances
+            having similar predicted output. This parameter balances the
+            importance of the two terms of the equation to optimize
+    
+        k : int, optional, default : 5
+            Neighbours parameter for clustering during the algorithm.
+            It will indicate the number of clusters we want to create
+            for the k nearest neighbor (kNN)
+        """
+        self.s = s
+        self.alpha = alpha
+        self.k = k
+        return None
