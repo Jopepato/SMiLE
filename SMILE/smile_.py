@@ -94,7 +94,7 @@ class SMiLE:
 
         Parameters
         ----------
-        X : array-like or sparse matrix, shape=(n_samples, n_features)
+        X : array-like or sparse matrix, shape=(n_features, n_samples)
             Training instances.
         y : array-like, shape=(n_samples, n_labels)
             Training labels.
@@ -117,7 +117,7 @@ class SMiLE:
 
         Parameters
         ----------
-        X : array-like or sparse matrix, shape=(n_samples, n_features)
+        X : array-like or sparse matrix, shape=(n_features, n_samples)
             Test instances.
         
         Returns:
@@ -126,11 +126,12 @@ class SMiLE:
             Label predictions for the test instances.
         """
         #TODO Ensure the input and output format
-        predictions = np.zeros(shape=[X.shape[0], self.b.shape[0]])
-        for i in range(0, X.shape[0]):
-            numerator1 = np.matmul(np.transpose(self.P), X[i,:])
-            predictions[i] = numerator1 + self.b
-        return predictions
+        predictions = np.zeros(shape=[self.b.shape[0], X.shape[1]])
+        for i in range(0, X.shape[1]):
+            numerator1 = np.matmul(np.transpose(self.P), X[:, i])
+            prediction = np.add(np.transpose(numerator1), self.b)
+            predictions[:, i] = prediction[:,0]
+        return np.transpose(predictions)
     
     def getParams(self):
         """Returns the parameters of this model
