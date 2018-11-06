@@ -19,14 +19,14 @@ def label_correlation(y, s):
         Label correlation matrix
 
     """
-    L = np.zeros(shape=[y.shape[1], y.shape[1]])
+    L = np.zeros(shape=[y.shape[0], y.shape[0]])
 
-    for i in range(0, y.shape[1]):
-        for j in range(0, y.shape[1]):
+    for i in range(0, y.shape[0]):
+        for j in range(0, y.shape[0]):
             coincidence = 0
-            yi = sum(y[:,i])
-            for k in range(0, y.shape[0]):
-                if y[k,i] == y[k,j]:
+            yi = sum(y[i,:])
+            for k in range(0, y.shape[1]):
+                if y[i,k] == y[j,k]:
                     coincidence += 1
             L[i,j] = (coincidence + s)/(yi + 2*s)
 
@@ -52,15 +52,15 @@ def estimate_mising_labels(y, L):
     """
 
     estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
-    for i in range(0, y.shape[0]):
-        for j in range(0, y.shape[1]):
-            if y[i,j] == 0:
-                estimate_matrix[i,j] = np.matmul(np.transpose(y[i,:]), L[:,j])
+    for i in range(0, y.shape[1]):
+        for j in range(0, y.shape[0]):
+            if y[j,i] == 0:
+                estimate_matrix[j,i] = np.matmul(np.transpose(y[:, i]), L[j,:])
             else:
-                estimate_matrix[i,j] = 1
+                estimate_matrix[j,i] = 1
             #Normalize the data
-            if np.sum(y[i,:]) != 0:
-                y[i,j] = y[i,j]/(np.sum(y[i,:]))
+            if np.sum(y[:,j]) != 0:
+                y[j,i] = y[j,i]/(np.sum(y[:,j]))
 
     return estimate_matrix
 
@@ -69,7 +69,7 @@ def weight_adjacent_matrix(X, k):
 
     Parameters
     ----------
-    X : array-like or sparse matrix (n_samples, n_features)
+    X : array-like or sparse matrix (n_features, n_samples)
         Data to classify or in this case to make clusters
     k : int
         Number of clusters we want to make
@@ -82,11 +82,11 @@ def weight_adjacent_matrix(X, k):
         wij = 0 other case
     """
     kNN = KMeans(n_clusters=k)
-    kNN.fit(X)
-    predictions = kNN.predict(X)
-    W = np.zeros(shape=[X.shape[0], X.shape[0]], dtype=int)
-    for i in range(0, X.shape[0]):
-        for j in range(0, X.shape[0]):
+    kNN.fit(np.transpose(X))
+    predictions = kNN.predict(np.transpose(X))
+    W = np.zeros(shape=[X.shape[1], X.shape[1]], dtype=int)
+    for i in range(0, X.shape[1]):
+        for j in range(0, X.shape[1]):
             if int(predictions[i]) == int(predictions[j]):
                 W[i,j] = 1
             else:
@@ -99,7 +99,7 @@ def diagonal_matrix_H(X, y):
 
     Parameters
     ----------
-    X : array-like or sparse matrix (n_samples, n_features)
+    X : array-like or sparse matrix (n_features, n_samples)
         Data to classify
     y : array-like (n_samples, n_labels)
         Labels of the data
@@ -110,10 +110,10 @@ def diagonal_matrix_H(X, y):
         Diagonal matrix indicating if an element of X is labeled or not
     """
 
-    H = np.zeros(shape=[X.shape[0], X.shape[0]])
+    H = np.zeros(shape=[X.shape[1], X.shape[1]])
 
-    for i in range(0, X.shape[0]):
-        if np.sum(y[i,:]) != 0:
+    for i in range(0, X.shape[1]):
+        if np.sum(y[:, i]) != 0:
             H[i,i] = 1
 
     return H
@@ -133,7 +133,7 @@ def diagonal_matrix_lambda(W):
     """
     diagonal_lambda = np.zeros(shape=[W.shape[0], W.shape[1]])
     for i in range(0, W.shape[0]):
-        diagonal_lambda[i,i] = np.sum(W[i,:])
+        diagonal_lambda[i,i] = np.sum(W[:,i])
     
     return diagonal_lambda
 
@@ -153,7 +153,7 @@ def graph_laplacian_matrix(lambda_matrix, W):
         Graph laplacian matrix
     """
     M = np.zeros(shape=[W.shape[0], W.shape[1]])
-    M = np.abs(np.array(lambda_matrix) - np.array(W))
+    M = np.subtract(lambda_matrix, W)
     return M
 
 def diagonal_matrix_Hc(H):
@@ -170,12 +170,12 @@ def diagonal_matrix_Hc(H):
         Hc = H - (H*1*1t*Ht)/(N)
     """
     Hc = np.zeros(shape = [H.shape[0], H.shape[0]])
-    ident = np.identity(n=H.shape[0])
-    numerator1 = np.matmul(H, ident)
-    numerator2 = np.matmul(np.transpose(ident), np.transpose(H))
+    oneVector = np.ones(shape=[H.shape[0],1])
+    numerator1 = np.matmul(H, oneVector)
+    numerator2 = np.matmul(np.transpose(oneVector), np.transpose(H))
     numerator = np.matmul(numerator1, numerator2)
     product = numerator/H.shape[0]
-    Hc = np.abs(H - product)
+    Hc = np.subtract(H, product)
     return Hc
 
 def predictive_matrix(X, Hc, M, estimate_matrix, alpha):
@@ -183,7 +183,7 @@ def predictive_matrix(X, Hc, M, estimate_matrix, alpha):
 
     Parameters
     ----------
-    X : array-like or sparse matrix (n_samples, n_features)
+    X : array-like or sparse matrix (n_features, n_samples)
         Data to be classified or trained
     Hc : array-like (n_samples, n_samples)
         Diagonal matrix obtained from H
@@ -196,16 +196,15 @@ def predictive_matrix(X, Hc, M, estimate_matrix, alpha):
         P = (X*Hc*Xt + alpha*X*M*Xt)-1 * X*Hc*YPred
         R = dxc
     """
-    P = np.zeros(shape=[X.shape[1], estimate_matrix.shape[1]])
-    numerator1 = np.matmul(np.transpose(X), Hc)
-    numerator1 = np.matmul(numerator1, X)
-    numerator2 = np.matmul(np.transpose(X), M)
-    numerator2 = np.matmul(numerator2, X)
-    numerator2 = alpha * numerator2
-    numerator = numerator1 + numerator2
+    P = np.zeros(shape=[X.shape[0], estimate_matrix.shape[0]])
+    numerator1 = np.matmul(X, Hc)
+    numerator1 = np.matmul(numerator1, np.transpose(X))
+    numerator2 = np.matmul(M, np.transpose(X))
+    numerator2 = alpha * np.matmul(X, numerator2)
+    numerator = np.add(numerator1, numerator2)
     numerator = inv(numerator)
-    numerator2 = np.matmul(np.transpose(X), Hc)
-    numerator2 = np.matmul(numerator2, estimate_matrix)
+    numerator2 = np.matmul(X, Hc)
+    numerator2 = np.matmul(numerator2, np.transpose(estimate_matrix))
     P = np.matmul(numerator, numerator2)
 
     return P
@@ -219,7 +218,7 @@ def label_bias(estimate_matrix, P, X, H):
         Diagonal matrix indicating if an element of X is labeled or not
     P : array-like (n_features, n_labels)
         Predictive item
-    X : array-like (n_samples, n_features)
+    X : array-like (n_features, n_samples)
         Data to train or test
     H : array-like (n_samples, n_samples)
         Diagonal matrix indicating if an element of X is labeled or not
@@ -231,9 +230,11 @@ def label_bias(estimate_matrix, P, X, H):
         b = ((estimate_matrix - Pt*X)*H*1)/N
     """
     b = np.zeros(estimate_matrix.shape[1])
-    aux = np.matmul(np.transpose(P),np.transpose(X))
-    numerator1 = np.abs(np.transpose(estimate_matrix) - aux)
-    numerator2 = np.diag(H)
+    aux = np.matmul(np.transpose(P), X)
+    numerator1 = np.subtract(estimate_matrix, aux)
+    oneVector = np.ones(shape=[H.shape[0], 1])
+    numerator2 = np.matmul(H, oneVector)
     numerator = np.matmul(numerator1, numerator2)
     b = numerator / H.shape[0]
+    print(b.shape)
     return b
