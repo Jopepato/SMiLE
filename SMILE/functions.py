@@ -59,8 +59,8 @@ def estimate_mising_labels(y, L):
             else:
                 estimate_matrix[j,i] = 1
             #Normalize the data
-            if np.sum(y[:,j]) != 0:
-                y[j,i] = y[j,i]/(np.sum(y[:,j]))
+            if np.sum(estimate_matrix[:,j]) != 0:
+                y[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
 
     return estimate_matrix
 
