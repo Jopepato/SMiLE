@@ -7,7 +7,7 @@ def label_correlation(y, s):
 
     Parameters
     ----------
-    y : array-like (n_samples, n_labels)
+    y : array-like (n_labels, n_samples)
         Label matrix
 
     s : float
@@ -39,7 +39,6 @@ def estimate_mising_labels(y, L):
     ----------
     y : array-like (n_samples, n_labels)
         Label matrix
-
     L : array-like (n_labels, n_labels)
         Label correlation matrix
 
@@ -59,8 +58,9 @@ def estimate_mising_labels(y, L):
             else:
                 estimate_matrix[j,i] = 1
             #Normalize the data
-            if np.sum(y[:,j]) != 0:
-                y[j,i] = y[j,i]/(np.sum(y[:,j]))
+            if y[j,i] == 0:
+                if np.sum(estimate_matrix[:,j]) != 0:
+                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
 
     return estimate_matrix
 
