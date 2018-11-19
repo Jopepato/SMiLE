@@ -123,7 +123,9 @@ class SMiLE:
         Returns:
         --------
         predictions : array-like, shape=(n_samples, n_labels)
-            Label predictions for the test instances.
+            Label predictions for the test instances. (As if it was a regression problem range[0,1])
+        
+        predictionsNormalized : array-like, shape=(n_samples, n_labels)
         """
         #TODO Ensure the input and output format
         predictions = np.zeros(shape=[self.b.shape[0], X.shape[1]])
@@ -131,7 +133,15 @@ class SMiLE:
             numerator1 = np.matmul(np.transpose(self.P), X[:, i])
             prediction = np.add(np.transpose(numerator1), self.b)
             predictions[:, i] = prediction[:,0]
-        return np.transpose(predictions)
+        predictionsNormalized = predictions
+        for i in range(predictionsNormalized.shape[0]):
+            for j in range(predictionsNormalized.shape[1]):
+                if predictionsNormalized[i,j] > 0.5:
+                    predictionsNormalized[i,j] = 1
+                else:
+                    predictionsNormalized[i,j] = 0
+
+        return np.transpose(predictions), np.trasnpose(predictionsNormalized)
     
     def getParams(self):
         """Returns the parameters of this model
