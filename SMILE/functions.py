@@ -26,7 +26,7 @@ def label_correlation(y, s):
             coincidence = 0
             yi = sum(y[i,:])
             for k in range(0, y.shape[1]):
-                if y[i,k] == y[j,k]:
+                if y[i,k] == 1 and y[j,k] == 1:
                     coincidence += 1
             L[i,j] = (coincidence + s)/(yi + 2*s)
 
