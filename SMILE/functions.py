@@ -37,30 +37,30 @@ def estimate_mising_labels(y, L):
 
     Parameters
     ----------
-    y : array-like (n_samples, n_labels)
+    y : array-like (n_labels, n_samples)
         Label matrix
     L : array-like (n_labels, n_labels)
         Label correlation matrix
 
     Returns
     -------
-    estimate_matrix : array-like (n_samples, n_labels)
+    estimate_matrix : array-like (n_labels, n_samples)
         Label estimation matrix
         y~ic = yiT * L(.,c) if yic == 0
         y~ic = 1 otherwise
     """
 
     estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
-    for i in range(0, y.shape[1]):
-        for j in range(0, y.shape[0]):
-            if y[j,i] == 0:
-                estimate_matrix[j,i] = np.matmul(np.transpose(y[:, i]), L[j,:])
+    for i in range(0, y.shape[0]):
+        for j in range(0, y.shape[1]):
+            if y[i,j] == 0:
+                estimate_matrix[i,j] = np.matmul(np.transpose(y[:, j]), L[i,:])
             else:
-                estimate_matrix[j,i] = 1
+                estimate_matrix[i,j] = 1
             #Normalize the data
-            if y[j,i] == 0:
+            if y[i,j] == 0:
                 if np.sum(estimate_matrix[:,j]) != 0:
-                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
+                    estimate_matrix[i,j] = estimate_matrix[i,j]/(np.sum(estimate_matrix[:,j]))
 
     return estimate_matrix
 
@@ -101,7 +101,7 @@ def diagonal_matrix_H(X, y):
     ----------
     X : array-like or sparse matrix (n_features, n_samples)
         Data to classify
-    y : array-like (n_samples, n_labels)
+    y : array-like (n_labels, n_samples)
         Labels of the data
 
     Returns
@@ -236,5 +236,5 @@ def label_bias(estimate_matrix, P, X, H):
     numerator2 = np.matmul(H, oneVector)
     numerator = np.matmul(numerator1, numerator2)
     b = numerator / H.shape[0]
-    print(b.shape)
+
     return b

@@ -96,7 +96,7 @@ class SMiLE:
         ----------
         X : array-like or sparse matrix, shape=(n_features, n_samples)
             Training instances.
-        y : array-like, shape=(n_samples, n_labels)
+        y : array-like, shape=(n_labels, n_samples)
             Training labels.
         """
         #TODO Ensure the input format
@@ -122,10 +122,10 @@ class SMiLE:
         
         Returns:
         --------
-        predictions : array-like, shape=(n_samples, n_labels)
+        predictions : array-like, shape=(n_labels, n_samples)
             Label predictions for the test instances. (As if it was a regression problem range[0,1])
         
-        predictionsNormalized : array-like, shape=(n_samples, n_labels)
+        predictionsNormalized : array-like, shape=(n_labels, n_samples)
             Label predictions
         """
         #TODO Ensure the input and output format
@@ -142,7 +142,7 @@ class SMiLE:
                 else:
                     predictionsNormalized[i,j] = 0
 
-        return np.transpose(predictions), np.transpose(predictionsNormalized)
+        return predictions, predictionsNormalized
     
     def getParams(self):
         """Returns the parameters of this model
