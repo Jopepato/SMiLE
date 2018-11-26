@@ -26,7 +26,7 @@ def label_correlation(y, s):
             coincidence = 0
             yi = sum(y[i,:])
             for k in range(0, y.shape[1]):
-                if y[i,k] == y[j,k]:
+                if y[i,k] == 1 and y[j,k] == 1:
                     coincidence += 1
             L[i,j] = (coincidence + s)/(yi + 2*s)
 
@@ -59,8 +59,8 @@ def estimate_mising_labels(y, L):
                 estimate_matrix[j,i] = 1
             #Normalize the data
             if y[j,i] == 0:
-                if np.sum(estimate_matrix[:,j]) != 0:
-                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
+                if np.sum(estimate_matrix[:,i]) != 0:
+                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
 
     return estimate_matrix
 
@@ -133,7 +133,7 @@ def diagonal_matrix_lambda(W):
     """
     diagonal_lambda = np.zeros(shape=[W.shape[0], W.shape[1]])
     for i in range(0, W.shape[0]):
-        diagonal_lambda[i,i] = np.sum(W[:,i])
+        diagonal_lambda[i,i] = np.sum(W[i,:])
     
     return diagonal_lambda
 
@@ -236,5 +236,4 @@ def label_bias(estimate_matrix, P, X, H):
     numerator2 = np.matmul(H, oneVector)
     numerator = np.matmul(numerator1, numerator2)
     b = numerator / H.shape[0]
-    print(b.shape)
     return b
