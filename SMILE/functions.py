@@ -58,9 +58,9 @@ def estimate_mising_labels(y, L):
             else:
                 estimate_matrix[i,j] = 1
             #Normalize the data
-            if y[i,j] == 0:
-                if np.sum(estimate_matrix[:,j]) != 0:
-                    estimate_matrix[i,j] = estimate_matrix[i,j]/(np.sum(estimate_matrix[:,j]))
+            if y[j,i] == 0:
+                if np.sum(estimate_matrix[:,i]) != 0:
+                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
 
     return estimate_matrix
 
@@ -133,7 +133,7 @@ def diagonal_matrix_lambda(W):
     """
     diagonal_lambda = np.zeros(shape=[W.shape[0], W.shape[1]])
     for i in range(0, W.shape[0]):
-        diagonal_lambda[i,i] = np.sum(W[:,i])
+        diagonal_lambda[i,i] = np.sum(W[i,:])
     
     return diagonal_lambda
 
@@ -236,5 +236,4 @@ def label_bias(estimate_matrix, P, X, H):
     numerator2 = np.matmul(H, oneVector)
     numerator = np.matmul(numerator1, numerator2)
     b = numerator / H.shape[0]
-
     return b

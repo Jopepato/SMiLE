@@ -140,9 +140,13 @@ class SMiLE:
         #TODO Ensure the input and output format
         predictions = np.zeros(shape=[self.b.shape[0], X.shape[1]])
         for i in range(0, X.shape[1]):
-            numerator1 = np.matmul(np.transpose(self.P), X[:, i])
-            prediction = np.add(np.transpose(numerator1), self.b)
-            predictions[:, i] = prediction[:,0]
+            numerator1 = np.zeros(shape=[self.b.shape[0],1])
+            numerator = np.array(np.matmul(np.transpose(self.P), X[:, i]))
+            for k in range(numerator1.shape[0]):
+                numerator1[k,0] = numerator[k]
+            prediction = np.add(numerator1, self.b)
+            for k in range(prediction.shape[0]):
+                predictions[k,i] = prediction[k]
         predictionsNormalized = np.copy(predictions)
         for i in range(predictionsNormalized.shape[0]):
             for j in range(predictionsNormalized.shape[1]):
