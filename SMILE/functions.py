@@ -51,16 +51,16 @@ def estimate_mising_labels(y, L):
     """
 
     estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
-    for i in range(0, y.shape[0]):
-        for j in range(0, y.shape[1]):
-            if y[i,j] == 0:
-                estimate_matrix[i,j] = np.matmul(np.transpose(y[:, j]), L[i,:])
+    for j in range(0, y.shape[0]):
+        for i in range(0, y.shape[1]):
+            if y[j,i] == 0:
+                estimate_matrix[j,i] = np.matmul(np.transpose(y[:, i]), L[j,:])
             else:
-                estimate_matrix[i,j] = 1
+                estimate_matrix[j,i] = 1
             #Normalize the data
             if y[j,i] == 0:
-                if np.sum(estimate_matrix[:,i]) != 0:
-                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
+                if np.sum(estimate_matrix[:,j]) != 0:
+                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
 
     return estimate_matrix
 
