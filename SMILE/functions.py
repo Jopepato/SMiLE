@@ -22,11 +22,11 @@ def label_correlation(y, s):
     L = np.zeros(shape=[y.shape[0], y.shape[0]])
 
     for i in range(0, y.shape[0]):
+        yi = sum(y[i,:])
         for j in range(0, y.shape[0]):
             coincidence = 0
-            yi = sum(y[i,:])
             for k in range(0, y.shape[1]):
-                if y[i,k] == 1 and y[j,k] == 1:
+                if (int(y[i,k]) == int(1)) and (int(y[j,k]) == int(1)):
                     coincidence += 1
             L[i,j] = (coincidence + s)/(yi + 2*s)
 
@@ -59,8 +59,8 @@ def estimate_mising_labels(y, L):
                 estimate_matrix[j,i] = 1
             #Normalize the data
             if y[j,i] == 0:
-                if np.sum(estimate_matrix[:,j]) != 0:
-                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,j]))
+                if np.sum(estimate_matrix[:,i]) != 0:
+                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
 
     return estimate_matrix
 
