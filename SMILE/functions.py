@@ -29,7 +29,7 @@ def label_correlation(y, s):
                 if (int(y[i,k]) == int(1)) and (int(y[j,k]) == int(1)):
                     coincidence += 1
             L[i,j] = (coincidence + s)/(yi + 2*s)
-
+    
     return L
 
 def estimate_mising_labels(y, L):
@@ -50,17 +50,21 @@ def estimate_mising_labels(y, L):
         y~ic = 1 otherwise
     """
 
-    estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]])
+    estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]], dtype=float)
     for j in range(0, y.shape[0]):
         for i in range(0, y.shape[1]):
             if y[j,i] == 0:
-                estimate_matrix[j,i] = np.matmul(np.transpose(y[:, i]), L[j,:])
+                aux = np.dot(np.transpose(y[:, i]), L[:,j])
+                print aux
+                estimate_matrix[j,i] = aux
             else:
                 estimate_matrix[j,i] = 1
             #Normalize the data
             if y[j,i] == 0:
                 if np.sum(estimate_matrix[:,i]) != 0:
+                    aux = 
                     estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
+            
 
     return estimate_matrix
 
@@ -113,7 +117,7 @@ def diagonal_matrix_H(X, y):
     H = np.zeros(shape=[X.shape[1], X.shape[1]])
 
     for i in range(0, X.shape[1]):
-        if np.sum(y[:, i]) != 0:
+        if np.sum(y[:, i]) > 0:
             H[i,i] = 1
 
     return H

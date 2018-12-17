@@ -101,7 +101,7 @@ class SMiLE:
         """
         #TODO Ensure the input format
         self.L = label_correlation(y, self.s)
-        print(self.L)
+        #print(self.L)
         self.estimate_matrix = estimate_mising_labels(y, self.L)
         print(self.estimate_matrix)
         self.H = diagonal_matrix_H(X, y)
