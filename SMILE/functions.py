@@ -49,23 +49,23 @@ def estimate_mising_labels(y, L):
         y~ic = yiT * L(.,c) if yic == 0
         y~ic = 1 otherwise
     """
-
     estimate_matrix = np.zeros(shape=[y.shape[0],y.shape[1]], dtype=float)
-    for j in range(0, y.shape[0]):
-        for i in range(0, y.shape[1]):
-            if y[j,i] == 0:
+    for j in range(y.shape[0]):
+        for i in range(y.shape[1]):
+            if int(y[j,i]) == int(0):
                 aux = np.dot(np.transpose(y[:, i]), L[:,j])
-                print aux
                 estimate_matrix[j,i] = aux
             else:
                 estimate_matrix[j,i] = 1
-            #Normalize the data
-            if y[j,i] == 0:
-                if np.sum(estimate_matrix[:,i]) != 0:
-                    aux = 
-                    estimate_matrix[j,i] = estimate_matrix[j,i]/(np.sum(estimate_matrix[:,i]))
+    #Once we have the matrix, normalize the data
+    estimate_matrix_copy = np.copy(estimate_matrix)
+    for j in range(y.shape[0]):
+        for i in range(y.shape[1]):
+            if int(y[j,i]) == int(0):
+                if np.sum(estimate_matrix_copy[:,i]) != 0:
+                    aux = estimate_matrix_copy[j,i]/(np.sum(estimate_matrix_copy[:,i]))
+                    estimate_matrix[j,i] = aux
             
-
     return estimate_matrix
 
 def weight_adjacent_matrix(X, k):
