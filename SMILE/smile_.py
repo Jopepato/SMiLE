@@ -101,9 +101,9 @@ class SMiLE:
         """
         #TODO Ensure the input format
         self.L = label_correlation(y, self.s)
-        print(self.L)
+        #print(self.L)
         self.estimate_matrix = estimate_mising_labels(y, self.L)
-        print(self.estimate_matrix)
+        #print(self.estimate_matrix)
         self.H = diagonal_matrix_H(X, y)
         #print(self.H)
         self.Hc = diagonal_matrix_Hc(self.H)
@@ -150,7 +150,7 @@ class SMiLE:
         predictionsNormalized = np.copy(predictions)
         for i in range(predictionsNormalized.shape[0]):
             for j in range(predictionsNormalized.shape[1]):
-                if predictionsNormalized[i,j] > 0.6:
+                if predictionsNormalized[i,j] > 0.5:
                     predictionsNormalized[i,j] = 1
                 else:
                     predictionsNormalized[i,j] = 0
