@@ -208,8 +208,9 @@ def predictive_matrix(X, Hc, M, estimate_matrix, alpha):
     numerator2 = alpha * np.matmul(X, numerator2)
     numerator = np.add(numerator1, numerator2)
     #Add some error to the numerator matrix in order to make the inverse possible
-    noise = random.uniform(0.0, 1.0)
-    numerator = numerator + noise
+    for i in range(0, numerator.shape[0]):
+        for j in range(0, numerator.shape[1]):
+            numerator[i,j] += random.uniform(0.0, 1.0)
     numerator = inv(numerator)
     numerator2 = np.matmul(X, Hc)
     numerator2 = np.matmul(numerator2, np.transpose(estimate_matrix))
