@@ -5,7 +5,6 @@ description = "SMiLE algorithm for multilabel datasets with missing labels, foll
 authors = ["Jose Perez-Parras Toledano <joseperezparras95@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^2.7"
 more-itertools = "4.3"
 six = "^1.12"
 pathlib2 = "^2.3"
