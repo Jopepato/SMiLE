@@ -155,7 +155,39 @@ class SMiLE:
                 else:
                     predictionsNormalized[i,j] = 0
 
-        return predictions, predictionsNormalized
+        predictionsNormalized = np.asarray(predictionsNormalized, dtype=int)
+        predictionsNormalized = np.transpose(predictionsNormalized)
+        return predictionsNormalized
+
+
+    
+    def predict_proba(self, X):
+        """Predict the probabilities using the model
+
+        Parameters
+        ----------
+        X : array-like or sparse matrix, shape=(n_features, n_samples)
+            Test instances.
+        
+        Returns:
+        --------
+        probabilities : array-like, shape=(n_labels, n_samples)
+            Label predictions for the test instances. (As if it was a regression problem range[0,1])
+            They could also be used for probabilities
+        
+        """
+        probabilities = np.zeros(shape=[self.b.shape[0], X.shape[1]])
+        for i in range(0, X.shape[1]):
+            numerator1 = np.zeros(shape=[self.b.shape[0],1])
+            numerator = np.array(np.matmul(np.transpose(self.P), X[:, i]))
+            for k in range(numerator1.shape[0]):
+                numerator1[k,0] = numerator[k]
+            prediction = np.add(numerator1, self.b)
+            for k in range(prediction.shape[0]):
+                probabilities[k,i] = prediction[k]
+
+        probabilities = np.transpose(probabilities)
+        return probabilities
     
     def getParams(self):
         """Returns the parameters of this model
