@@ -186,6 +186,7 @@ class SMiLE:
             for k in range(prediction.shape[0]):
                 probabilities[k,i] = prediction[k]
 
+        probabilities = np.asarray(probabilities)
         probabilities = np.transpose(probabilities)
         return probabilities
     
