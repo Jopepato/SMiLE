@@ -137,9 +137,19 @@ class SmileTest(unittest.TestCase):
         y = np.transpose(y)
         smile.fit(X,y)
         predictions = np.zeros(shape=[X.shape[0], y.shape[1]])
-        predictions1, predictions2 = smile.predict(X)
-        self.assertTrue(np.sum(predictions1) != 0)
-        self.assertTrue(np.sum(predictions2) != 0)
+        predictions = smile.predict(X)
+        self.assertTrue(np.sum(predictions) != 0)
+
+    def test_predict_proba(self):
+        smile = SMiLE()
+        X, y = make_multilabel_classification()
+        X = np.transpose(X)
+        y = np.transpose(y)
+        smile.fit(X,y)
+        probabilities = np.zeros(shape=[X.shape[0], y.shape[1]])
+        probabilities = smile.predict_proba(X)
+        self.assertTrue(np.sum(probabilities) != 0)
+        self.assertTrue(np.sum(probabilities) != 0)
 
     def test_getParams(self):
         smile = SMiLE()
